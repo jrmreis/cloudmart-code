@@ -3,20 +3,23 @@ set -e
 
 # Load environment variables from mounted ConfigMap
 if [ -f /app/.env ]; then
-  # Export all variables from the .env file
+  echo "Loading environment variables from ConfigMap"
   export $(grep -v '^#' /app/.env | xargs)
+  echo "Loaded VITE_API_BASE_URL=${VITE_API_BASE_URL}"
+else
+  echo "Warning: No .env file found at /app/.env"
 fi
 
 # Create config.js from template
-if [ -f /app/public/config.js.template ]; then
-  # Use envsubst to replace variables in the template
-  envsubst < /app/public/config.js.template > /app/public/config.js
-  echo "Generated /app/public/config.js with API_BASE_URL=${VITE_API_BASE_URL}"
+if [ -f /app/config.js.template ]; then
+  echo "Generating config.js from template"
+  envsubst < /app/config.js.template > /app/config.js
+  echo "Generated config.js with API_BASE_URL=${VITE_API_BASE_URL}"
 else
-  echo "Error: /app/public/config.js.template not found"
+  echo "Error: config.js.template not found"
   exit 1
 fi
 
 # Start the server
-echo "Starting server with command: $@"
+echo "Starting server: $@"
 exec "$@"
