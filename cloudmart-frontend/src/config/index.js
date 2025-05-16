@@ -1,3 +1,4 @@
+// src/config/index.js
 // Get API base URL from runtime config or environment variables
 let apiBaseUrl;
 
